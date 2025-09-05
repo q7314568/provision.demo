@@ -66,74 +66,29 @@
   </div>
 </template>
 
-<script>
-import * as api from '../services/api';
+<script setup lang="ts">
+import { useAddRevenueItem } from '../composables/useAddRevenueItem';
+import { useRouter } from 'vue-router';
 
-export default {
-  data() {
-    return {
-      reportDate: '',
-      dataYearMonth: '',
-      companyCode: '',
-      companyName: '',
-      industry: '',
-      currentRevenue: 0,
-      lastMonthRevenue: 0,
-      lastYearSameMonthRevenue: 0,
-      monthlyChangePercent: null,
-      yearlyChangePercent: null,
-      cumulativeCurrentRevenue: 0,
-      cumulativeLastYearRevenue: 0,
-      cumulativeChangePercent: null,
-      remarks: ''
-    };
-  },
-  methods: {
-    async addRevenueItem() {
-      try {
-        const newItem = {
-          reportDate: this.reportDate,
-          dataYearMonth: this.dataYearMonth,
-          companyCode: this.companyCode,
-          companyName: this.companyName,
-          industry: this.industry,
-          currentRevenue: this.currentRevenue,
-          lastMonthRevenue: this.lastMonthRevenue,
-          lastYearSameMonthRevenue: this.lastYearSameMonthRevenue,
-          monthlyChangePercent: this.monthlyChangePercent,
-          yearlyChangePercent: this.yearlyChangePercent,
-          cumulativeCurrentRevenue: this.cumulativeCurrentRevenue,
-          cumulativeLastYearRevenue: this.cumulativeLastYearRevenue,
-          cumulativeChangePercent: this.cumulativeChangePercent,
-          remarks: this.remarks
-        };
-        await api.addMonthlyRevenue(newItem);
-        this.$router.push({ name: 'RevenueView' });
-        alert('新增成功！');
-        this.resetForm();
-      } catch (error) {
-        console.error('There was a problem adding the revenue item:', error);
-        alert('新增失敗，請重試。');
-      }
-    },
-    resetForm() {
-      this.reportDate = '';
-      this.dataYearMonth = '';
-      this.companyCode = '';
-      this.companyName = '';
-      this.industry = '';
-      this.currentRevenue = 0;
-      this.lastMonthRevenue = 0;
-      this.lastYearSameMonthRevenue = 0;
-      this.monthlyChangePercent = null;
-      this.yearlyChangePercent = null;
-      this.cumulativeCurrentRevenue = 0;
-      this.cumulativeLastYearRevenue = 0;
-      this.cumulativeChangePercent = null;
-      this.remarks = '';
-    }
-  }
-};
+const router = useRouter();
+const {
+  reportDate,
+  dataYearMonth,
+  companyCode,
+  companyName,
+  industry,
+  currentRevenue,
+  lastMonthRevenue,
+  lastYearSameMonthRevenue,
+  monthlyChangePercent,
+  yearlyChangePercent,
+  cumulativeCurrentRevenue,
+  cumulativeLastYearRevenue,
+  cumulativeChangePercent,
+  remarks,
+  addRevenueItem,
+  resetForm
+} = useAddRevenueItem(router);
 </script>
 
 <style scoped>

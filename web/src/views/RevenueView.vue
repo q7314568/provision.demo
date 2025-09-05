@@ -2,20 +2,20 @@
   <div>
     <h1>每月營收總結</h1>
     <button @click="navigateToAddRevenueItem" style="margin-bottom: 20px;">新增營收項目</button>
+    <div>
+      <label>
+        公司編號：
+        <input type="text" v-model="filterCompany" />
+      </label>
+      <label>
+        年月：
+        <input type="text" v-model="filterYYmm" />
+      </label>
+    </div>
     <div v-if="loading">
       <p>資料加載中...</p>
     </div>
     <div v-else>
-      <div>
-        <label>
-          公司編號：
-          <input type="text" v-model="filterCompany" @input="fetchRevenueData" />
-        </label>
-        <label>
-          年月：
-          <input type="text" v-model="filterYYmm" @input="fetchRevenueData" />
-        </label>
-      </div>
       <div v-if="totalRecords > 0">
         <p>總筆數：{{ totalRecords }}</p>
         <table>
@@ -67,57 +67,34 @@
   </div>
 </template>
 
-<script>
-import * as api from '../services/api';
+<script setup lang="ts">
 
-export default {
-  data() {
-    return {
-      revenueData: [],
-      filterCompany: '',
-      filterYYmm: '',
-      totalRecords: 0, // 用於存儲總筆數
-      loading: true,
-      currentPage: 1,
-      pageSize: 10, // 每頁顯示的筆數
-      totalPages: 0 // 總頁數
-    };
-  },
-  mounted() {
-    this.fetchRevenueData();
-  },
-  methods: {
-    async fetchRevenueData() {
-      try {
-        const response = await api.getMonthlyRevenueSummary({
-          dataYearMonth: this.filterYYmm,
-          companyCode: this.filterCompany,
-          pageNumber: this.currentPage,
-          pageSize: this.pageSize
-        });
-        this.revenueData = response.items; // 更新為根據後端回傳的 PagedResult 結構
-        this.totalRecords = response.totalRecords; // 獨立的 state 來存儲總筆數
-        this.totalPages = Math.ceil(this.totalRecords / this.pageSize); // 計算總頁數
-        this.loading = false;
-      } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        this.loading = false;
-      }
-    },
-    changePage(page) {
-      if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
-        this.fetchRevenueData();
-      }
-    },
-    getFormattedChange(changePercent) {
-      return changePercent != null ? changePercent.toFixed(2) : 'N/A';
-    },
-    navigateToAddRevenueItem() {
-      this.$router.push({ name: 'AddRevenueItem' });
-    }
-  }
-};
+import { onMounted } from 'vue';
+import { useRevenueSummary } from '../composables/useRevenueSummary';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const {
+  revenueData,
+  filterCompany,
+  filterYYmm,
+  totalRecords,
+  loading,
+  currentPage,
+  pageSize,
+  totalPages,
+  fetchRevenueData,
+  changePage,
+  getFormattedChange
+} = useRevenueSummary();
+
+function navigateToAddRevenueItem() {
+  router.push({ name: 'AddRevenueItem' });
+}
+
+onMounted(() => {
+  fetchRevenueData();
+});
 </script>
 
 <style scoped>

@@ -4,15 +4,9 @@
   </div>
 </template>
 
-<script>
-import RevenueView from './views/RevenueView.vue';
 
-export default {
-  name: 'App',
-  components: {
-    RevenueView
-  }
-};
+<script setup lang="ts">
+// 無需註冊元件，router-view 會自動渲染
 </script>
 
 <style scoped>

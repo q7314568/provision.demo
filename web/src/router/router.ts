@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router';
 import RevenueView from '../views/RevenueView.vue';
 import AddRevenueItem from '../views/AddRevenueItem.vue';
 
-const routes = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'RevenueView',
@@ -15,8 +16,16 @@ const routes = [
   }
 ];
 
+
+// 補充 import.meta.env 型別
+interface ImportMeta {
+  env: {
+    VITE_BASE_URL: string;
+  };
+}
+
 const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_BASE_URL),
+  history: createWebHistory((import.meta as any).env.VITE_BASE_URL),
   routes
 });
 
